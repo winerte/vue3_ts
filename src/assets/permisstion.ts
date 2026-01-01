@@ -1,8 +1,8 @@
 import router from '@/router'
 import nprogress from 'nprogress'
 import 'nprogress/nprogress.css'
-import useUserStore from './store/modules/user'
-import pinia from './store'
+import useUserStore from '@/store/modules/user'
+import pinia from '@/store'
 import { el } from 'element-plus/es/locales.mjs'
 
 

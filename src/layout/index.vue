@@ -4,24 +4,6 @@
             <Logo></Logo>
             <!-- 滚动条 -->
             <el-scrollbar class="scrollbar">
-                <!-- 静态菜单
-                <el-menu default-active="1" >
-                    <el-menu-item index="1">
-                        <template #title>首页</template>
-</el-menu-item>
-<el-menu-item index="2">
-    <template #title>数据大屏</template>
-</el-menu-item>
-<el-sub-menu index="3">
-    <template #title>
-                            <i class="el-icon-location"></i>
-                            <span>权限管理</span>
-                        </template>
-    <el-menu-item index="1-1">用户管理</el-menu-item>
-    <el-menu-item index="1-2">角色管理</el-menu-item>
-    <el-menu-item index="1-3">菜单管理</el-menu-item>
-</el-sub-menu>
-</el-menu> -->
                 <!-- 动态菜单 -->
                 <el-menu :default-active="$route.path">
                     <Menu :menuList="userStore.menuRoutes"> </Menu>
@@ -29,8 +11,7 @@
             </el-scrollbar>
         </div>
         <div class="top">
-            <TopBar />
-        </div>
+            <TopBar />        </div>
         <div class="content">
             <router-view></router-view>
         </div>
@@ -46,7 +27,7 @@ import useUserStore from "@/store/modules/user"
 let userStore = useUserStore()
 
 </script>
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .main {
     width: 100%;
     height: 100vh;
@@ -60,7 +41,7 @@ let userStore = useUserStore()
     .left {
         width: 20%;
         height: 100%;
-      
+        
         position: absolute;
         .scrollbar {
             width: 100%;
@@ -74,7 +55,7 @@ let userStore = useUserStore()
         width: 80%;
         height: 10%;
         left: 20%;
-     
+        
         
     }
 

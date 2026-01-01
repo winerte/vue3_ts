@@ -62,7 +62,7 @@ const routes = [
         }
       },
       {
-        path: '/alc/menu',
+        path: '/acl/menu',
         name: 'menu', //命名路由
         component : () => import('@/views/acl/menu/index.vue'),
         meta: {

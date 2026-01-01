@@ -1,30 +1,20 @@
-// src/main.js
-import './assets/main.css'
-import 'element-plus/dist/index.css'
+<template>
+  <div id="app">
+    <router-view />
+  </div>
+</template>
 
-import { createApp } from 'vue'
-import App from './App.vue'
-import ElementPlus from 'element-plus'
-// 导入中文语言包
-import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
-import router from './router'
-import pinia from './store'
-// 引入所有Element Plus图标
-import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+<script setup lang="ts">
+// App.vue 主组件
+</script>
 
-import './permisstion'
-
-const app = createApp(App)
-// 使用中文语言包
-app.use(ElementPlus, {
-  locale: zhCn
-})
-app.use(router)
-app.use(pinia)
-
-// 注册所有图标为全局组件
-for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
-  app.component(key, component)
+<style scoped>
+/* 全局样式 */
+#app {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
-
-app.mount('#app')
+</style>
