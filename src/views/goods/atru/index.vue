@@ -31,7 +31,7 @@
     </el-card>
     <el-card class="box-card_down">
         <template #header>
-            <el-button class="button" type="primary" @click="addAttr">
+            <el-button class="button" type="primary" :disabled="c3Id === ( 0 && undefined )? true : false " @click="addAttr">
                 <el-icon style="vertical-align: middle;">
                     <plus />
                 </el-icon>
