@@ -1,5 +1,5 @@
 import request from "@/utils/request";
-import type { ProductPageLst,ProductPage } from "./type";
+import type { ProductPageLst,puSaleAttrList } from "./type";
 enum API  {
     GETPRODUCTLIST = '/admin/product',
     GETBaseSaleAttrList = '/admin/product/baseSaleAttrList',
@@ -14,6 +14,6 @@ export const baseSaleAttrList = () => request.get<any,any>(API.GETBaseSaleAttrLi
 
 export const imageList = (spuId:number) => request.get<any,any>(API.GETImageList+`/${spuId}`);
 
-export const spuSaleAttrList = (spuId:number) => request.get<any,any>(API.GETSpuSaleAttrList+`/${spuId}`);
+export const spuSaleAttrList = (spuId:number) => request.get<any,puSaleAttrList>(API.GETSpuSaleAttrList+`/${spuId}`);
 
 

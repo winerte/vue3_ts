@@ -15,8 +15,9 @@
                 </el-input>
             </el-form-item>
             <el-form-item label="spu照片">
-                <el-upload :action="uploadUrl" :headers="uploadHeaders" list-type="picture-card"
-                    :on-preview="handlePictureCardPreview" :on-success="handleUploadSuccess" >
+
+                <el-upload v-if="uploadFileList.length < 0" :action="uploadUrl" :headers="uploadHeaders"
+                    list-type="picture-card" :on-preview="handlePictureCardPreview" :on-success="handleUploadSuccess">
                     <el-icon>
                         <plus />
                     </el-icon>
@@ -24,15 +25,21 @@
                 <el-dialog v-model="dialogVisible">
                     <img width="100%" :src="dialogImageUrl" alt="" />
                 </el-dialog>
+                <template v-if="uploadFileList.length > 0">
+                    <img style="margin: 10px;" v-for="(item, index) in uploadFileList" :src='item.imgUrl' alt="">
+
+                </template>
+
+
             </el-form-item>
             <el-form-item label="spu销售属性">
-                <el-select multiple placeholder="请选择111" style="width: 200px ;">
-                    <el-option label="请选择" value=""></el-option>
+                <el-select v-model="baseSale" placeholder="请选择" style="width: 200px ;">
+                    <el-option v-for="item in unBaseSaleAttrList" :label="item.name" :value="item.id"></el-option>
                 </el-select>
-                <el-button type="primary" icon="plus" style="margin-left: 10px;">添加</el-button>
-                <el-table border style="margin: 10px 0;" width="100%">
+                <el-button type="primary" icon="plus" :disabled=" unBaseSaleAttrList.length > 0 ? false : true" style="margin-left: 10px;" @click="addSaleBtn">添加</el-button>
+                <el-table :data="unBaseSaleAttrList" border style="margin: 10px 0;" width="100%">
                     <el-table-column type="index" label="序号" width="80"></el-table-column>
-                    <el-table-column label="属性名"></el-table-column>
+                    <el-table-column label="name"></el-table-column>
                     <el-table-column label="属性值">
                         <el-tag>111</el-tag>
                     </el-table-column>
@@ -54,7 +61,7 @@ import { ref, onMounted, watch, computed, reactive } from 'vue'
 import { reqAllList } from '@/api/goods/kids'
 import { Records } from '@/api/goods/kids/type'
 import { imageList, spuSaleAttrList, baseSaleAttrList } from '@/api/goods/spu'
-import { Record ,ImgData} from '@/api/goods/spu/type'
+import { Record, ImgData, BaseAttr, puSaleAttr } from '@/api/goods/spu/type'
 import { ElMessage } from 'element-plus'
 import useUserStore from '@/store/modules/user'
 
@@ -76,6 +83,7 @@ watch(() => props.row, () => {
     if (props.row) {
         getImageList(props.row.id)
         getSpuSaleAttrList(props.row.id)
+        selectId.value = props.row.tmId
     }
 })
 
@@ -90,33 +98,42 @@ const getReqAllList = async () => {
 const getImageList = async (spuId: number) => {
     let result = await imageList(spuId)
     if (result.code == 200) {
-        console.log(result.data)
+        uploadFileList.value = result.data
     }
 }
 
 const getSpuSaleAttrList = async (spuId: number) => {
     let result = await spuSaleAttrList(spuId)
     if (result.code == 200) {
-        console.log(result.data)
+        // 处理没有数据：计算baseSaleAttrDataList中不在result.data中的属性
+        // 1. 提取已有的属性baseSaleAttrId列表（注意：spuSaleAttrList返回的是puSaleAttr类型，比较的是baseSaleAttrId）
+        const existingBaseAttrIds = new Set(result.data.map(item => item.baseSaleAttrId))
+        // 2. 过滤出不在现有列表中的属性
+        unBaseSaleAttrList.value = baseSaleAttrDataList.value.filter(item => !existingBaseAttrIds.has(item.id))
+        if(unBaseSaleAttrList.value.length > 0){
+            baseSale.value = unBaseSaleAttrList.value[0].id
+        }
+      
     }
 }
-
+let unBaseSaleAttrList = ref<BaseAttr[]>([])
+let baseSaleAttrDataList = ref<BaseAttr[]>([])
 // 获取所有销售列表
 const getBaseTrademark = async () => {
     let result = await baseSaleAttrList()
     if (result.code == 200) {
-        console.log(result.data)
+        baseSaleAttrDataList.value = result.data
     }
 }
 
 let selectId = ref<number>()
-
+let baseSale = ref<number>()
 // 获取user store
 const userStore = useUserStore()
 
 // 计算属性生成上传headers，携带token
 const uploadHeaders = computed(() => ({
-  token: userStore.token || ''
+    token: userStore.token || ''
 }))
 
 // 使用环境配置的上传路径
@@ -132,14 +149,14 @@ const submitData = () => {
     ElMessage.success({
         message: '恭喜你，这是一条成功消息',
         type: 'success',
-    })  
+    })
 }
 
 let dialogVisible = ref<boolean>(false)
-    let dialogImageUrl = ref<string>('')
-const handlePictureCardPreview =(file)=>{
+let dialogImageUrl = ref<string>('')
+const handlePictureCardPreview = (file) => {
     dialogVisible.value = true
-    dialogImageUrl=file.url
+    dialogImageUrl = file.url
 }
 let uploadFileList = ref<ImgData[]>([])
 let imgData = reactive<ImgData>({
@@ -147,11 +164,21 @@ let imgData = reactive<ImgData>({
     imgUrl: '',
     spuId: props.c3Id!
 })
-const handleUploadSuccess = (file) => {
-    if(file){
+const handleUploadSuccess = (response, file, fileList) => {
+
+    console.log(props.c3Id)
+    if (response.code === 200) {
         imgData.imgUrl = file.response.data
         imgData.imgName = file.name
+        imgData.spuId = props.c3Id!
         uploadFileList.value.push(imgData)
     }
+}
+
+const addSaleBtn = ()=>{
+    console.log(baseSale.value)
+    arrtTable= baseSale.value
+    //移除这个数据
+    unBaseSaleAttrList.value.splice(unBaseSaleAttrList.value.findIndex(item => item.id === baseSale.value),1)
 }
 </script>

@@ -52,3 +52,5 @@ export interface SpuSaleAttrValue {
 }
 
 export interface ProductPageLst extends BaseRespons<ProductPage>{}
+
+export interface puSaleAttrList extends BaseRespons<puSaleAttr[]>{}
