@@ -1,33 +1,12 @@
 <template>
     <el-card class="box-card_up">
-        <div>
-            <el-form :inline="true" size="medium">
-
-                <el-form-item label="一级分类" label-width="80px">
-                    <el-select v-model="c1Id" placeholder="请选择" @change="handleC1Change" style="width: 200px">
-                        <el-option v-for="item in c1List" :key="item.id" :label="item.name"
-                            :value="item.id"></el-option>
-                    </el-select>
-                </el-form-item>
-
-                <el-form-item label="二级分类">
-                    <el-select v-model="c2Id" placeholder="请选择" @change="handleC2Change" style="width: 200px">
-                        <el-option v-for="item in c2List" :key="item.id" :label="item.name"
-                            :value="item.id"></el-option>
-                    </el-select>
-                </el-form-item>
-
-                <el-form-item label="三级分类">
-                    <el-select v-model="c3Id" placeholder="请选择" @change="" style="width: 200px">
-                        <el-option v-for="item in c3List" :key="item.id" :label="item.name"
-                            :value="item.id"></el-option>
-                    </el-select>
-                </el-form-item>
-
-            </el-form>
-        </div>
-
-
+        <!-- 使用Category组件 -->
+        <Category 
+            v-model:c1Id="c1Id" 
+            v-model:c2Id="c2Id" 
+            v-model:c3Id="c3Id"
+            @categoryChange="handleCategoryChange"
+        ></Category>
     </el-card>
     <el-card class="box-card_down">
         <template #header>
@@ -99,34 +78,26 @@
     </el-card>
 </template>
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
-import { reqC1, reqC2, reqC3, reqAttrList, reqDelete, reqAddOrUpdate } from '@/api/goods/artu'
-import { CategoryInfo, AttrInfo ,AttrValueList} from '@/api/goods/artu/type'
-
-
-
-
-// 三级分类数据
-const c1List = ref<CategoryInfo[]>([])
-const c2List = ref<CategoryInfo[]>([])
-const c3List = ref<CategoryInfo[]>([])
+    
+import { ref, watch } from 'vue'
+import { reqAttrList, reqDelete, reqAddOrUpdate } from '@/api/goods/artu'
+import { AttrInfo ,AttrValueList} from '@/api/goods/artu/type'
+// 导入Category组件
+import Category from '@/commpents/category.vue'
 
 // 选中的分类ID
-const c1Id = ref<number>()
-const c2Id = ref<number>()
-const c3Id = ref<number>()
+const c1Id = ref<number>(0)
+const c2Id = ref<number>(0)
+const c3Id = ref<number>(0)
 
 const tableData = ref<AttrInfo[]>([])
 
 const formData = ref<AttrInfo>()
 
-
 let disabled = ref<boolean>(true)
 
 let dialogFormVisible = ref<boolean>(false)
 let title = ref<string>('')
-
-
 
 const inputChange = () => {
     disabled.value = false
@@ -136,66 +107,17 @@ const cleanInput = () => {
     disabled.value = true
     formData.value!.attrName = ''
 }
-// 获取一级分类列表
-const getAttrC1 = async () => {
-    try {
-        let result = await reqC1()
-        // 由于request拦截器已经返回了response.data，所以需要进一步处理
-        c1List.value = Array.isArray(result) ? result : result.data || []
-    } catch (error) {
-        console.error('获取一级分类失败:', error)
-        c1List.value = []
+
+// 处理分类变化事件
+const handleCategoryChange = (c1Id: number, c2Id: number, c3Id: number) => {
+    if (c3Id === 0) {
+        tableData.value = []
+        return
     }
+    getAttrList()
 }
 
-// 获取二级分类列表
-const getAttrC2 = async (c1Id: number) => {
-    try {
-        let result = await reqC2(c1Id)
-        c2List.value = Array.isArray(result) ? result : result.data || []
-        // 清空三级分类
-        c2Id.value = 0
-        c3Id.value = 0
-        c3List.value = []
-    } catch (error) {
-        console.error('获取二级分类失败:', error)
-        c2List.value = []
-    }
-}
-
-// 获取三级分类列表
-const getAttrC3 = async (c2Id: number) => {
-    try {
-        let result = await reqC3(c2Id)
-        c3List.value = Array.isArray(result) ? result : result.data || []
-        // 清空三级分类选中值
-        c3Id.value = 0
-    } catch (error) {
-        console.error('获取三级分类失败:', error)
-        c3List.value = []
-    }
-}
-
-// 一级分类变化时触发
-const handleC1Change = (value: number) => {
-    getAttrC2(value)
-}
-
-// 二级分类变化时触发
-const handleC2Change = (value: number) => {
-    getAttrC3(value)
-}
-
-// 三级分类变化时触发
-// const handleC3Change = (value: number) => {
-//     if (value === 0) {
-//         tableData.value = []
-//         return
-//     }
-//     getAttrList()
-
-// }
-
+// 监听c3Id变化，获取属性列表
 watch(c3Id, () => {
     if (c3Id.value === 0) {
         tableData.value = []
@@ -204,8 +126,9 @@ watch(c3Id, () => {
     getAttrList()
 })
 
+// 获取属性列表
 const getAttrList = async () => {
-    let result = await reqAttrList(c1Id.value!, c2Id.value!, c3Id.value!)
+    let result = await reqAttrList(c1Id.value, c2Id.value, c3Id.value)
     if (result.code === 200) {
         tableData.value = result.data
     } else {
@@ -213,10 +136,7 @@ const getAttrList = async () => {
     }
 }
 
-onMounted(() => {
-    getAttrC1()
-})
-
+// 删除属性
 const delAttr = async (id:number) => {
     let result = await reqDelete(id)
     if (result.code === 200) {
@@ -225,9 +145,9 @@ const delAttr = async (id:number) => {
     } else {
         alert('删除失败')
     }
-    
 }
 
+// 修改属性
 const updateAttr = (data: AttrInfo) => {
     title.value = '修改属性'
     dialogFormVisible.value = true
@@ -235,6 +155,7 @@ const updateAttr = (data: AttrInfo) => {
     disabled.value = false
 }
 
+// 点击确定按钮
 const clickButton = async () => {
     let result = await reqAddOrUpdate(formData.value!)
 
@@ -255,8 +176,8 @@ const clickButton = async () => {
     }
 }
 
+// 添加属性
 const addAttr = () => {
-    console.log(c3Id.value)
     if (c3Id.value === 0 || c3Id.value === undefined) {
         return
     }
@@ -264,16 +185,14 @@ const addAttr = () => {
     dialogFormVisible.value = true
     title.value = '添加属性'
     formData.value = {
-
         attrName: '',
         categoryId: c3Id.value!,
         categoryLevel: 3,
         attrValueList: []
     }
-
 }
 
-
+// 添加属性值
 const addTable = () => {
     formData.value!.attrValueList.push({
         valueName: '',
@@ -281,13 +200,9 @@ const addTable = () => {
     })
 }
 
+// 删除属性值
 const delTable = (data:AttrValueList)=>{
-  
-        //console.log(formData.value?.attrValueList[data.id])
-   //根据row中的attrId移除列表 中国的数据
-  formData.value!.attrValueList = formData.value!.attrValueList.filter(item=>item.id !== data.id)
-
-  
+    formData.value!.attrValueList = formData.value!.attrValueList.filter(item=>item.id !== data.id)
 }
 </script>
 

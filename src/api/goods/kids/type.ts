@@ -1,5 +1,5 @@
 export interface RequestInit {
-    current: number,
+  current: number,
   pages: number,
   records: Records,
   searchCount: true,
@@ -7,22 +7,22 @@ export interface RequestInit {
   total: number
 }
 
-export interface Records{
+export interface Records {
 
-  createTime?:  string,
+  createTime?: string,
   id?: number,
   logoUrl: string,
   tmName: string,
   updateTime?: string
-  
+
 }
 
-export interface RespData{
+export interface RespData {
   code: number,
   message: string,
-  ok:number
+  ok: number
 }
 
-export interface RequestDataInit extends RespData{
-    data: RequestInit
+export interface RequestDataInit extends RespData {
+  data: RequestInit
 }
