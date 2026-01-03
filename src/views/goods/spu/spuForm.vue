@@ -105,6 +105,8 @@ const getImageList = async (spuId: number) => {
     let result = await imageList(spuId)
     if (result.code == 200) {
         uploadFileList.value = result.data
+        // 将获取到的图片数据传递给父组件
+        $emit('update:spuImageList', result.data)
     }
 }
 

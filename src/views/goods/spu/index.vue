@@ -7,7 +7,8 @@
 
     <div v-show="sence == 0">
         <el-card class="box-card_down">
-            <el-button class="button" type="primary" :disabled="c3Id === undefined ? true : false" @click="addSence(currentRow)">
+            <el-button class="button" type="primary" :disabled="c3Id === undefined ? true : false"
+                @click="addSence(currentRow)">
                 <el-icon style="vertical-align: middle;">
                     <plus />
                 </el-icon>
@@ -18,7 +19,7 @@
                 <el-table-column prop="spuName" label="SPU名称" width="230"> </el-table-column>
                 <el-table-column :show-overflow-tooltip="true" prop="description" label="SPU描述" width="350">
                 </el-table-column>
-                <el-table-column  label="操作">
+                <el-table-column label="操作">
                     <template #="{ row, $index }">
                         <el-button type="primary" @click="addSence(row)">
                             <el-icon style="vertical-align: middle;">
@@ -30,7 +31,7 @@
                                 <edit />
                             </el-icon>
                         </el-button>
-                        <el-button type="info" @click="">
+                        <el-button type="info" @click="infoClick(row)">
                             <el-icon style="vertical-align: middle;">
                                 <InfoFilled />
                             </el-icon>
@@ -47,24 +48,51 @@
                 :page-sizes="[5, 10, 15, 20]" :page-size="pageSize"
                 layout=" prev, pager, next, jumper , -> ,total, sizes," :total="productPageData?.total">
             </el-pagination>
+            <el-drawer title="spu信息" v-model="drawer" destroy-on-close>
+                <el-row>
+                    <el-col :span="8">
+                        spu名称
+                    </el-col>
+                    <el-col :span="16">
+                        {{ currentRow.spuName }}
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="8">
+                        spu描述
+                    </el-col>
+                    <el-col :span="16">
+                        {{ currentRow.description }}
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="8">
+                        spu图片
+                    </el-col>
+                    <el-col :span="16">
+                        <el-carousel :interval="4000" type="card" height="200px">
+                            <el-carousel-item v-for="(item, index) in currentRow.spuImageList || []" :key="index">
+                                <img :src="item.imgUrl" style="width: 100%; height: 100%; object-fit: cover;">
+                            </el-carousel-item>
+                        </el-carousel>
+                    </el-col>
+                </el-row>
+
+
+
+            </el-drawer>
         </el-card>
     </div>
 
     <div>
-        <spuForm 
-            v-show="sence === 1" 
-            @changeSence="changeSence"
-            :row="currentRow"
-            :c3Id="c3Id"
-            
-        ></spuForm>
+        <spuForm v-show="sence === 1" @changeSence="changeSence" :row="currentRow" :c3Id="c3Id" @update:spuImageList="updateSpuImageList"></spuForm>
     </div>
-        
+
     <div>
         <skuForm v-show="sence === 2" @changeSence="changeSence"></skuForm>
     </div>
-   
-    
+
+
 
 </template>
 
@@ -101,8 +129,8 @@ watch(c3Id, () => {
     getProducts()
 })
 
-const  changeSence = (num: number) => {
-   sence.value = num
+const changeSence = (num: number) => {
+    sence.value = num
 }
 const addSence = (row: Record) => {
     sence.value = 1
@@ -129,13 +157,22 @@ const handleCurrentChange = (val: any) => {
 const handleCategoryChange = (c3Id: number) => {
     console.log('c3Id', c3Id);
 }
+let drawer = ref(false);
+const updateSpuImageList = (imageList: any[]) => {
+    currentRow.value.spuImageList = imageList
+}
+
+const infoClick = (row: Record) => {
+    currentRow.value = row
+    drawer.value = true
+}
 </script>
 
 <style scoped lang="scss">
 .box-card-up {
     width: 100%;
     margin-bottom: 20px;
-    
+
 }
 
 .box-card-down {
