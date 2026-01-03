@@ -18,7 +18,7 @@
                 <el-table-column prop="spuName" label="SPU名称" width="230"> </el-table-column>
                 <el-table-column :show-overflow-tooltip="true" prop="description" label="SPU描述" width="350">
                 </el-table-column>
-                <el-table-column prop="edit" label="操作">
+                <el-table-column  label="操作">
                     <template #="{ row, $index }">
                         <el-button type="primary" @click="addSence(row)">
                             <el-icon style="vertical-align: middle;">
