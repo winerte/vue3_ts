@@ -26,7 +26,7 @@
                                 <plus />
                             </el-icon>
                         </el-button>
-                        <el-button type="warning" @click="addSkuSence">
+                        <el-button type="warning" @click="addSkuSence(row)">
                             <el-icon style="vertical-align: middle;">
                                 <edit />
                             </el-icon>
@@ -89,7 +89,7 @@
     </div>
 
     <div>
-        <skuForm v-show="sence === 2" @changeSence="changeSence"></skuForm>
+        <skuForm v-show="sence === 2" @changeSence="changeSence" :row="currentRow" :c3Id="c3Id"></skuForm>
     </div>
 
 
@@ -136,8 +136,9 @@ const addSence = (row: Record) => {
     sence.value = 1
     currentRow.value = row
 }
-const addSkuSence = () => {
+const addSkuSence = (row: Record) => {
     sence.value = 2
+    currentRow.value = row
 }
 
 const getProducts = async () => {
