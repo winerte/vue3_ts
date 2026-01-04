@@ -1,0 +1,1 @@
+import{m as e}from"./index-Du_Ei7i5.js";const d=(a,r)=>e.get(`/admin/product/baseTrademark/${a}/${r}`),s=a=>e.post("/admin/product/baseTrademark/save",a),m=a=>e.post("/admin/product/baseTrademark/update",a),o=a=>e.delete(`/admin/product/baseTrademark/remove/${a}`),c=()=>e.get("admin/product/baseTrademark/getTrademarkList");export{o as a,m as b,s as c,c as d,d as r};
