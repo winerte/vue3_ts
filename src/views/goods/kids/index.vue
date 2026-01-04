@@ -35,8 +35,8 @@
                     <el-input v-model="formData.tmName" placeholder="请输入品牌名称"></el-input>
                 </el-form-item>
                 <el-form-item label="品牌logo">
-                    <el-upload class="upload-demo" drag action="/admin/product/fileUpload" multiple>
-                        <el-icon><Plus /></el-icon>
+                    <el-upload class="upload-demo" drag :action="uploadUrl" :headers="uploadHeaders" multiple>
+                        <el-icon><Plus/></el-icon>
                         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
                         <template #tip>
                             <div class="el-upload__tip">只能上传 jpg/png 文件，且不超过 500kb</div>
@@ -57,9 +57,10 @@
 
 <script setup lang="ts">
 
-import { ref, onMounted, reactive } from 'vue'
+import { ref, onMounted, reactive, computed } from 'vue'
 import { reqBaseTrademark,reqAdd,reqUpdate ,reqDelete} from '@/api/goods/kids'
 import { Records } from '@/api/goods/kids/type'
+import useUserStore from '@/store/modules/user'
 
 let tableData = ref<Records>();
 let total = ref<number>(1)
@@ -72,6 +73,17 @@ let formData = reactive<Records>({
     tmName: '',
     logoUrl: '/api/static/img/sph/20241210/oppo.jpeg',
 })
+
+// 使用环境配置的上传路径
+const uploadUrl = ref<string>(`${import.meta.env.VITE_BASE_API}/admin/product/fileUpload`)
+
+// 获取user store
+const userStore = useUserStore()
+
+// 计算属性生成上传headers，携带token
+const uploadHeaders = computed(() => ({
+  token: userStore.token || ''
+}))
 
 const getBaseTrademark = async (page: number = 1, pageSize: number) => {
     let result = await reqBaseTrademark(page, pageSize)

@@ -10,6 +10,8 @@ import router from './router'
 import pinia from './store'
 // 引入所有Element Plus图标
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+// 导入ElMessage组件
+import { ElMessage } from 'element-plus'
 
 import './assets/permisstion'
 
@@ -25,5 +27,8 @@ app.use(pinia)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
+
+// 注册ElMessage为全局属性
+app.config.globalProperties.$message = ElMessage
 
 app.mount('#app')

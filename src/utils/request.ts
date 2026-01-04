@@ -4,7 +4,7 @@ import { ElMessage } from "element-plus";
 import useUserStore from "@/store/modules/user";
 //利用axios的create方法创建一个axios实例
 const request = axios.create({
-  baseURL: import.meta.env.VITE_SERVER, // 请求的公共路径
+  baseURL: import.meta.env.VITE_BASE_API, // 请求的公共路径，使用相对路径通过Vite代理转发
   timeout: 5000, // 超时时间
 });
 //添加请求拦截器
