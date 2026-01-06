@@ -22,7 +22,7 @@
         }
         p{
             margin-left: 10px;
-            color:black;
+            color: var(--text-color);
             font-size: larger;
         }
         align-items: center;

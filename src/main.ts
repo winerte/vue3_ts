@@ -1,5 +1,7 @@
 import './assets/main.css'
 import 'element-plus/dist/index.css'
+// 导入Element Plus暗黑模式CSS
+import 'element-plus/theme-chalk/dark/css-vars.css'
 
 import { createApp } from 'vue'
 import App from './App.vue'
@@ -16,10 +18,19 @@ import { ElMessage } from 'element-plus'
 import './assets/permisstion'
 
 const app = createApp(App)
+
+// 从localStorage获取初始主题
+const darkMode = localStorage.getItem('darkMode') === 'true'
+// 初始化主题类
+if (darkMode) {
+  document.documentElement.classList.add('dark')
+}
+
 // 使用中文语言包
 app.use(ElementPlus, {
   locale: zhCn
 })
+
 app.use(router)
 app.use(pinia)
 

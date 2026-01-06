@@ -5,13 +5,39 @@
   box-sizing: border-box;
 }
 
+/* 定义CSS变量 */
+:root {
+  /* 浅色主题变量 */
+  --bg-color: #f5f7fa;
+  --text-color: #333;
+  --card-bg: #fff;
+  --border-color: #ebeef5;
+  --scrollbar-track: #f1f1f1;
+  --scrollbar-thumb: #888;
+  --scrollbar-thumb-hover: #555;
+  --shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* 暗黑主题变量 */
+html.dark {
+  --bg-color: #141414;
+  --text-color: #e5e5e5;
+  --card-bg: #1e1e1e;
+  --border-color: #303030;
+  --scrollbar-track: #1e1e1e;
+  --scrollbar-thumb: #555;
+  --scrollbar-thumb-hover: #777;
+  --shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.3);
+}
+
 html, body {
   width: 100%;
   height: 100%;
   font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
   font-size: 14px;
-  color: #333;
-  background-color: #f5f7fa;
+  color: var(--text-color);
+  background-color: var(--bg-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 #app {
@@ -26,16 +52,16 @@ html, body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--scrollbar-track);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #888;
+  background: var(--scrollbar-thumb);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: var(--scrollbar-thumb-hover);
 }
 
 /* 通用过渡动画 */
@@ -56,9 +82,11 @@ html, body {
 
 /* 卡片样式 */
 .card {
-  background: #fff;
+  background: var(--card-bg);
   border-radius: 8px;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
   padding: 20px;
   margin-bottom: 20px;
+  border: 1px solid var(--border-color);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
